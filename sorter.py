@@ -7,7 +7,7 @@ import subprocess
 import re
 
 def findAllFilesWithExt(path, ext):
-    cmd = "find \"{}\" -iname '*.{}'".format(path, ext)
+    cmd = "find \"%s\" -iname '*.%s'" % (path, ext)
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     return [ f.rstrip() for f in proc.stdout.readlines() ]
 
@@ -20,7 +20,7 @@ def moveFileToDir(srcpath, dest):
         os.mkdir(dest);
     fname = os.path.basename(srcpath)
     os.rename(srcpath, os.path.join(dest, fname))
-    print "os.rename({}, os.path.join({}, {}))".format(srcpath, dest, fname)
+    print "os.rename(%s, os.path.join(%s, %s))" % (srcpath, dest, fname)
     return
 
 for f in files:
@@ -34,8 +34,8 @@ for f in files:
     seasondir = os.path.dirname(relpath)
     print seasondir
     if season != seasondir:
-        print "orig: {}".format(f)
+        print "orig: %s" % (f)
         os.path.join(path, season)
-        print "new: {}".format(os.path.join(path, season))
+        print "new: %s" % (os.path.join(path, season))
         moveFileToDir(f, os.path.join(path, season))
 

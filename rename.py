@@ -88,20 +88,20 @@ def getNewFileName(f):
         names = []
         for x in range(episode1, episode2 + 1):
             if not season in episodes:
-                logger.warn("missing season {} from episodelist".format(season))
+                logger.warn("missing season %s from episodelist" % season)
                 continue
             seasonepisodes = episodes[season]
             if not x in seasonepisodes:
-                logger.warn("missing episode {} in season {}".format(x, season))
+                logger.warn("missing episode %s in season %s" % (x, season))
                 continue
             nextname = seasonepisodes[x]
             nextname = re.sub("[!:\?\\\\\\/]+", "_", nextname)
             if len(names) > 0:
-                print "multi-episode found, {}".format(f)
+                print "multi-episode found, %s" % f
                 d = Differ()
                 result = list(int(i[2]) for i in d.compare(names[0],nextname) if i[0] in ['-','+'] and i[2].isdigit())
                 if len(result) == 2:
-                    names[0] = rreplace(names[0], str(result[0]), "{}+{}".format(result[0],result[1]))
+                    names[0] = rreplace(names[0], str(result[0]), "%s+%s" % (result[0],result[1]))
                     # print names[0]
                 else:
                     names.append(nextname)
@@ -114,7 +114,7 @@ def getNewFileName(f):
         epidname = string.zfill(episode1, 2)
         if episode2 != episode1:
             epidname += "-" + string.zfill(episode2, 2)
-        return "{}x{} - {}".format(season, epidname, name)
+        return "%sx%s - %s" % (season, epidname, name)
 
 def getFileEnding(name):
     endingmatch = re.search("[^\.]+$", name)
@@ -126,7 +126,7 @@ def getFileEnding(name):
 def printAllEpisodes(episodesDict):
     for s, eps in episodesDict.iteritems():
         if len(eps) > 0:
-            print "Season {}".format(s);
+            print "Season %s" % s
             print(eps.keys())
 
 if(len(sys.argv) < 2):
@@ -164,7 +164,7 @@ def visit(arg, dirname, names):
             newFileName += "." + ending
             if newFileName == os.path.basename(f):
                 continue
-            logrename("mv \"{}\" -> \"{}\"\n".format(f, os.path.basename(newFileName)))
+            logrename("mv \"%s\" -> \"%s\"\n" % (f, os.path.basename(newFileName)))
             srcFileName = dirname + "/" + f
             dstFileName = dirname + "/" + newFileName
             # workaround for case-insentitive file-systems
@@ -177,13 +177,3 @@ os.path.walk(path, visit, 0)
 
 print("missing episodes: ")
 printAllEpisodes(episodescopy)
-
-#if(len(ops) == 0):
-    #print "nothing to do"
-    #sys.exit(0)
-#print("really do it? (Ctrl+C to abort)")
-#sys.stdin.readline()    
-#for src, dest in ops.iteritems():
-    #print "renaming: {} -> {}".format(src, dest)
-    #os.rename(src, dest)
-    
