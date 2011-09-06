@@ -9,11 +9,11 @@ import tempfile
 import copy
 from datetime import date
 from difflib import Differ
-import logging
+
 import time
 
-FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
-logging.basicConfig(format=FORMAT)
+from logconfig import *
+
 logger = logging.getLogger("renamer")
 
 endings = ["mkv", "avi"]
