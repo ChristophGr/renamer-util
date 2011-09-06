@@ -8,8 +8,6 @@ import re
 
 from logconfig import *
 
-logger = logging.getLogger("sorter")
-
 def findAllFilesWithExt(path, ext):
     cmd = "find \"%s\" -iname '*.%s'" % (path, ext)
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)

@@ -8,8 +8,6 @@ import sys
 
 from logconfig import *
 
-logger = logging.getLogger("puller")
-
 
 def getMatcherString(entry):
     result = re.sub("^[Tt]he*", "", entry)

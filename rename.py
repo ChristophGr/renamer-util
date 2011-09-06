@@ -14,8 +14,6 @@ import time
 
 from logconfig import *
 
-logger = logging.getLogger("renamer")
-
 endings = ["mkv", "avi"]
 patterns = [
              "(\d{1,2})x(\d{2})(-(\d{2}))?", #01x02-03
