@@ -29,10 +29,8 @@ for f in files:
     if match == None:
         continue;
     season = match.group()
-    print season
     relpath = os.path.relpath(f, path)
     seasondir = os.path.dirname(relpath)
-    print seasondir
     if season != seasondir:
         print "orig: %s" % (f)
         os.path.join(path, season)
