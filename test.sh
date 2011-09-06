@@ -10,5 +10,6 @@ fi
 for x in `ls -1 $FOLDER`; do
 	test -d "$FOLDER/$x" || continue;
     echo $x
+    $PWD/sorter.py "$FOLDER/$x"
 	$PWD/rename.py "$FOLDER/$x"
 done
