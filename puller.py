@@ -44,13 +44,13 @@ def main():
         sys.exit(2)
 
     entries = os.listdir(lookupdir)
-     
+
     patterns = dict([(e, getMatcherString(e)) for e in entries])
     print(patterns.keys())
 
     newFiles = findNewFiles(remotedir, "avi", host)
     newFiles += findNewFiles(remotedir, "mkv", host)
-    
+
     print "Counted %s new files." % len(newFiles)
     for f in newFiles:
         base = os.path.basename(f)
