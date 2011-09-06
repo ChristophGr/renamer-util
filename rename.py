@@ -18,12 +18,13 @@ logger = logging.getLogger("renamer")
 
 endings = ["mkv", "avi"]
 patterns = [
-             "(\d{1,2})x(\d{2})(-(\d{2}))?",
-             "S(\d{2})E(\d{2})(-(\d{2}))?",
-             "(\d{1,2})(\d{2})(-(\d{2}))?",
+             "(\d{1,2})x(\d{2})(-(\d{2}))?", #01x02-03
+             "S(\d{2})E(\d{2})(-(\d{2}))?", #S01E02-3
+             "(\d{1,2})(\d{2})(-(\d{2}))?", #102-03
+             "(\d{1,2})-(\d{2})(-(\d{2}))?", #01-02
            ]
 
-def download(url, dest): 
+def download(url, dest):
     import urllib
     webFile = urllib.urlopen(url)
     localFile = open(dest, 'w')
@@ -83,8 +84,8 @@ def getNewFileName(f):
         ids = splitid(mid)
         season = int(ids[0])
         episode1 = int(ids[1])
-        episode2 = int(ids[2] or episode1) 
-        
+        episode2 = int(ids[2] or episode1)
+
         names = []
         for x in range(episode1, episode2 + 1):
             if not season in episodes:
@@ -171,7 +172,7 @@ def visit(arg, dirname, names):
             intFileName = "%s_%d" % (srcFileName, time.time())
             os.rename(srcFileName, intFileName)
             os.rename(intFileName, dstFileName)
-            
+
 
 os.path.walk(path, visit, 0)
 
