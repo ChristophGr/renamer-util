@@ -44,7 +44,7 @@ def updateCacheForSeries(base):
         os.makedirs(tmpdir)
     tmpf = tmpdir + "/" + base
     if not os.path.exists(tmpf) or (date.today() - date.fromtimestamp(os.path.getmtime(tmpf))).days > 0:
-            print("downloading " + url)
+            logger.info("downloading " + url)
             download(url, tmpf)
     return tmpf
 
@@ -128,22 +128,9 @@ def printAllEpisodes(episodesDict):
             print "Season %s" % s
             print(eps.keys())
 
-if(len(sys.argv) < 2):
-    path = "/home/profalbert/House"
-else:
-    path = sys.argv[1]
-
-base = getBaseNameFromPath(path)
-tmpf = updateCacheForSeries(base)
-
-episodes = readEpisodeListFromFile(tmpf)
-episodescopy = copy.deepcopy(episodes)
-
-ops = dict()
-
-def logrename(entry):
+def logrename(path, entry):
     logfile = open(path + "/move.log", "a")
-    print entry
+    logger.info(entry)
     logfile.write(entry)
     logfile.write("\n")
     logfile.close()
@@ -152,27 +139,40 @@ def getContainingDirectoryName(filename):
     containerdir = os.path.dirname(filename)
     return os.path.split(containerdir)[1]
 
-def visit(arg, dirname, names):
-    for f in names:
-        ending = getFileEnding(f)
-        if not os.path.isdir(f) and (ending in endings):
-            newFileName = getNewFileName(f)
-            if newFileName == None:
-                logger.warn("No new filename found for %s" % f)
-                continue
-            newFileName += "." + ending
-            if newFileName == os.path.basename(f):
-                continue
-            logrename("mv \"%s\" -> \"%s\"\n" % (f, os.path.basename(newFileName)))
-            srcFileName = dirname + "/" + f
-            dstFileName = dirname + "/" + newFileName
-            # workaround for case-insentitive file-systems
-            intFileName = "%s_%d" % (srcFileName, time.time())
-            os.rename(srcFileName, intFileName)
-            os.rename(intFileName, dstFileName)
+episodes = dict()
 
+def main():
+    path = sys.argv[1]
 
-os.path.walk(path, visit, 0)
+    base = getBaseNameFromPath(path)
+    tmpf = updateCacheForSeries(base)
 
-print("missing episodes: ")
-printAllEpisodes(episodescopy)
+    episodes = readEpisodeListFromFile(tmpf)
+    episodescopy = copy.deepcopy(episodes)
+
+    def visit(arg, dirname, names):
+        for f in names:
+            ending = getFileEnding(f)
+            if not os.path.isdir(f) and (ending in endings):
+                newFileName = getNewFileName(f)
+                if newFileName == None:
+                    logger.warn("No new filename found for %s" % f)
+                    continue
+                newFileName += "." + ending
+                if newFileName == os.path.basename(f):
+                    continue
+                logrename(path, "mv \"%s\" -> \"%s\"\n" % (f, os.path.basename(newFileName)))
+                srcFileName = dirname + "/" + f
+                dstFileName = dirname + "/" + newFileName
+                # workaround for case-insentitive file-systems
+                intFileName = "%s_%d" % (srcFileName, time.time())
+                os.rename(srcFileName, intFileName)
+                os.rename(intFileName, dstFileName)
+
+    os.path.walk(path, visit, 0)
+
+    print("missing episodes: ")
+    printAllEpisodes(episodescopy)
+
+if __name__ == "__main__":
+    main()

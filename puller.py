@@ -18,7 +18,7 @@ def findDestDirectory(base, entries):
     for name, e in entries.iteritems():
         match = e.match(base)
         if match != None:
-            print("found match for " + base + ": " + name)
+            logger.info("found match for " + base + ": " + name)
             return name
 
 def findNewFiles(remotedir, ending, host):
@@ -48,26 +48,26 @@ def main():
     entries = os.listdir(lookupdir)
 
     patterns = dict([(e, getMatcherString(e)) for e in entries])
-    print(patterns.keys())
+    logger.debug(patterns.keys())
 
     newFiles = findNewFiles(remotedir, "avi", host)
     newFiles += findNewFiles(remotedir, "mkv", host)
 
-    print "Counted %s new files." % len(newFiles)
+    logger.debug("Counted %s new files." % len(newFiles))
     for f in newFiles:
         base = os.path.basename(f)
         series = findDestDirectory(base.rstrip(), patterns)
         if series == None:
-            print ("nothing found for " + f)
-            continue;
+            logger.warn("nothing found for " + f)
+            continue
         dest = os.path.join(lookupdir, series)
         if host == None:
             source = f
         else:
             source = "%s:\"%s\"" % (host, f)
-
-        print("rsync -hv --progress --remove-source-files " + source + " " + dest + "/")
-        retcode = subprocess.call(["rsync", "-hv", "--progress", "--remove-source-files", source , dest])
+        command = ["rsync", "-hv", "--progress", "--remove-source-files", source , dest]
+        logger.debug(" ".join(command))
+        retcode = subprocess.call(command)
         subprocess.call([os.path.join(sys.path[0], "./rename.py"), dest])
         subprocess.call([os.path.join(sys.path[0], "./sorter.py"), dest])
 
