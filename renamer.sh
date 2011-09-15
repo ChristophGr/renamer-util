@@ -14,5 +14,5 @@ for x in `ls -1 $FOLDER`; do
 	echo "testing $FOLDER/$x"
 	test -d "$FOLDER/$x" || continue;
 	echo $x
-	./rename.py "$FOLDER/$x"
+	$(dirname $0)/rename.py "$FOLDER/$x"
 done

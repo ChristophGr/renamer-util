@@ -52,10 +52,13 @@ def readEpisodeListFromFile(tmpf):
     contentfile = open(tmpf, 'r')
     episodes = dict()
     for line in contentfile.xreadlines():
+        logger.debug("read line: %s" % line)
         epIdMatch = re.search("\s+[1-9][0-9]?\-[0-9]{2}\s+", line)
         if epIdMatch != None:
             epid = epIdMatch.group().rstrip().lstrip()
+            logger.info("matched %s" % epid)
             splitted = epid.split("-")
+            logger.info(splitted)
             season = int(splitted[0])
             episodenum = int(splitted[1])
 
@@ -63,7 +66,9 @@ def readEpisodeListFromFile(tmpf):
                 episodes[season] = dict()
 
             linkstring = re.search("<a[^<]+</a>", line).group()
+            logger.info("link-string: %s" % linkstring)
             epname = linkstring[linkstring.find(">") + 1:linkstring.find("</")]
+            logger.info("name is %s" % epname)
             episodes[season][episodenum] = epname
     contentfile.close();
     return episodes
@@ -74,7 +79,8 @@ def splitid(idmatch):
 def rreplace(s, old, new, count = 1):
     return (s[::-1].replace(old[::-1], new[::-1], count))[::-1]
 
-def getNewFileName(f):
+def getNewFileName(episodes, f):
+    logger.info("get new filename for %s" % f)
     for p in patterns:
         mid = re.search(p, f, re.IGNORECASE)
         if(mid == None):
@@ -107,8 +113,8 @@ def getNewFileName(f):
             else:
                 names.append(nextname)
 
-            if x in episodescopy[season]:
-                del episodescopy[season][x]
+            if x in episodes[season]:
+                del episodes[season][x]
         name = " - ".join(names)
         epidname = string.zfill(episode1, 2)
         if episode2 != episode1:
@@ -154,7 +160,8 @@ def main():
         for f in names:
             ending = getFileEnding(f)
             if not os.path.isdir(f) and (ending in endings):
-                newFileName = getNewFileName(f)
+                newFileName = getNewFileName(episodescopy, f)
+                logger.info("got new filename %s" % newFileName)
                 if newFileName == None:
                     logger.warn("No new filename found for %s" % f)
                     continue
