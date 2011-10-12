@@ -11,12 +11,16 @@ from logconfig import *
 
 def getMatcherString(entry):
     result = re.sub("^[Tt]he*", "", entry)
+    result = result.lstrip()
     result = re.sub("\s", ".", result)
+    logger.debug("converted to regex: " + result)
     return re.compile(result, re.IGNORECASE)
 
 def findDestDirectory(base, entries):
+    logger.info("finding dest-directory for " + base)
+    logger.debug(entries)
     for name, e in entries.iteritems():
-        match = e.match(base)
+        match = e.search(base)
         if match != None:
             logger.info("found match for " + base + ": " + name)
             return name
