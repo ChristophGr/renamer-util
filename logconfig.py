@@ -6,7 +6,7 @@ import subprocess
 
 logging.basicConfig(format='%(asctime)-15s %(module)s:%(lineno)s %(levelname)s %(message)s')
 logger = logging.getLogger("rename")
-logger.setLevel("WARN")
+logger.setLevel(logging.INFO)
 
 #if(subprocess.call("tty -s") > 0):
 if True:
