@@ -115,7 +115,7 @@ def getNewFileName(episodes, f):
 
             if x in episodes[season]:
                 del episodes[season][x]
-        if len(name) == 0:
+        if len(names) == 0:
             return None
         name = " - ".join(names)
         epidname = string.zfill(episode1, 2)
