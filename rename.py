@@ -149,10 +149,20 @@ def getContainingDirectoryName(filename):
 
 episodes = dict()
 
+def getBasenameFromFile(path):
+    f = open(os.path.join(path, ".epguide"))
+    name = f.readline()
+    f.close()
+    return name
+    
 def main():
     path = sys.argv[1]
 
-    base = getBaseNameFromPath(path)
+    base = None
+    if os.path.exists(os.path.join(path, ".epguide")):
+        base = getBaseNameFromFile(path)
+    else
+        base = getBaseNameFromPath(path)
     tmpf = updateCacheForSeries(base)
 
     episodes = readEpisodeListFromFile(tmpf)
