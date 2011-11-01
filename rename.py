@@ -80,6 +80,9 @@ def rreplace(s, old, new, count = 1):
     return (s[::-1].replace(old[::-1], new[::-1], count))[::-1]
 
 def getNewFileName(episodes, f):
+    if(f == None):
+        raise
+        
     logger.info("get new filename for %s" % f)
     for p in patterns:
         mid = re.search(p, f, re.IGNORECASE)
