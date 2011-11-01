@@ -152,7 +152,7 @@ def getContainingDirectoryName(filename):
 
 episodes = dict()
 
-def getBasenameFromFile(path):
+def getBaseNameFromFile(path):
     f = open(os.path.join(path, ".epguide"))
     name = f.readline()
     f.close()
