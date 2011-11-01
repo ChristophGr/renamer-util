@@ -164,7 +164,7 @@ def main():
     base = None
     if os.path.exists(os.path.join(path, ".epguide")):
         base = getBaseNameFromFile(path)
-    else
+    else:
         base = getBaseNameFromPath(path)
     tmpf = updateCacheForSeries(base)
 
