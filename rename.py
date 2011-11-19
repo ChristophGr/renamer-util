@@ -103,6 +103,7 @@ def getNewFileName(episodes, f):
                 logger.warn("missing episode %s in season %s" % (x, season))
                 continue
             nextname = seasonepisodes[x]
+            # replace characters not allowed in filenames
             nextname = re.sub("[!:\?\\\\\\/]+", "_", nextname)
             if len(names) > 0:
                 print "multi-episode found, %s" % f
