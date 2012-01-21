@@ -16,11 +16,16 @@ def findAllFilesWithExt(path, ext):
 path = sys.argv[1]
 files = findAllFilesWithExt(path, "mkv")
 files += findAllFilesWithExt(path, "avi")
+files.sort()
+
+logger.info("found files %s" % files)
 
 def moveFileToDir(srcpath, dest):
     if not os.path.exists(dest):
+        logger.info("creating dir %s" % dest)
         os.mkdir(dest);
     fname = os.path.basename(srcpath)
+    logger.info("moving from %s to %s", srcpath, dest)
     os.rename(srcpath, os.path.join(dest, fname))
     print "os.rename(%s, os.path.join(%s, %s))" % (srcpath, dest, fname)
     return
@@ -29,13 +34,18 @@ for f in files:
     filename =  os.path.basename(f)
     match = re.search("^[0-9]+", filename)
     if match == None:
+        logger.warn("cannot determine season-dir for %s" % f)
         continue;
     season = match.group()
     relpath = os.path.relpath(f, path)
     seasondir = os.path.dirname(relpath)
+    logger.info("checking %s" % f)
     if season != seasondir:
+        logger.info("%s should be moved" % f)
         print "orig: %s" % (f)
         os.path.join(path, season)
         print "new: %s" % (os.path.join(path, season))
         moveFileToDir(f, os.path.join(path, season))
+    else:
+        logger.info("%s is in the correct directory" % f)
 
