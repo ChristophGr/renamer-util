@@ -26,7 +26,10 @@ def moveFileToDir(srcpath, dest):
         os.mkdir(dest);
     fname = os.path.basename(srcpath)
     logger.info("moving from %s to %s", srcpath, dest)
-    os.rename(srcpath, os.path.join(dest, fname))
+    destpath = os.path.join(dest, fname)
+    while os.path.exists(destpath):
+        destpath += "_"
+    os.rename(srcpath, destpath)
     print "os.rename(%s, os.path.join(%s, %s))" % (srcpath, dest, fname)
     return
 
