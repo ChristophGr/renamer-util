@@ -60,15 +60,18 @@ def moveAndPrintProgress(srcfile, dstfile):
     t = threading.Thread(target=p.showprogress)
     t.daemon = True
     t.start()
-    shutil.move(srcfile, dstfile)
-    p.stop()
+    try:
+        shutil.copyfile(srcfile, dstfile)
+        os.remove(srcfile)
+    finally:
+        p.stop()
 
 
 def main():
     print(sys.argv[1:]);
     srcfile = sys.argv[1]
     dstfile = sys.argv[2]
-    copyAndPrintProgress(srcfile, dstfile)
+    moveAndPrintProgress(srcfile, dstfile)
 
 
 if __name__ == "__main__":
