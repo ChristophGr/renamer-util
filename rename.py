@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+import codecs
 
 import sys
 import os
@@ -43,11 +44,11 @@ def updateCacheForSeries(base):
 
 
 def readEpisodeListFromFile(tmpf):
-    with open(tmpf, 'r') as contentfile:
+    with codecs.open(tmpf, encoding='cp1252') as contentfile:
         episodes = defaultdict(dict)  # lambda: defaultdict(dict)
         for line in contentfile:
             logger.debug("read line: %s" % line)
-            epIdMatch = re.search("\s+([1-9][0-9]?)\-\s*([1-9][0-9]?)\s+", line)
+            epIdMatch = re.search("\s+([1-9][0-9]?)\-\s*([0-9][0-9]?)\s+", line)
             if epIdMatch is None:
                 continue
             season = int(epIdMatch.group(1))
