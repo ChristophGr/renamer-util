@@ -144,6 +144,7 @@ class EpisodeNames:
 
     def getNewFileName(self, f):
         logger.debug("get new filename for {}".format(f))
+        f = re.sub("x264", "", f)
         seasonAndEpisode = self.findEpisodeIdentifier(f)
         if seasonAndEpisode is None:
             logger.warn("could not find identifier on ", f)
