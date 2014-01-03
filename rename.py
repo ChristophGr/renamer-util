@@ -1,24 +1,21 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import codecs
-
 import sys
 import os
 import os.path
 import re
-import string
 import tempfile
 import copy
 from datetime import date
 from difflib import Differ
 import urllib.request
-
 import time
-
-from logconfig import logger
 from collections import defaultdict
 
-endings = ["mkv", "avi"]
+from logconfig import logger
+
+endings = ["mkv", "avi", "mp4"]
 patterns = [
     "(\d{1,2})x(\d{2})(-(\d{2}))?", #01x02-03
     "S(\d{2})E(\d{2})(-(\d{2}))?", #S01E02-3
@@ -141,10 +138,15 @@ class EpisodeNames:
                 return seasonAndEpisode
         return None
 
+    def get_episode_identifier(self, f):
+        groups = self.findEpisodeIdentifier(f).groups()
+        return int(groups[0]), int(groups[1])
+
     def getNewFileName(self, f):
         logger.debug("get new filename for {}".format(f))
         seasonAndEpisode = self.findEpisodeIdentifier(f)
         if seasonAndEpisode is None:
+            logger.warn("could not find identifier on ", f)
             return None
         season = int(seasonAndEpisode.group(1))
         episode1 = int(seasonAndEpisode.group(2))
@@ -152,6 +154,7 @@ class EpisodeNames:
 
         names = self.getEpisodeTitles(season, episode1, episode2)
         if len(names) == 0:
+            logger.warn("could not find name for ", f)
             return None
         name = " - ".join(names)
         epidname = str(episode1).zfill(2)
@@ -160,7 +163,10 @@ class EpisodeNames:
         return "{}x{} - {}".format(season, epidname, name)
 
     def doRename(self, directory, filename):
-        newFileName = self.getNewFileName(filename)
+        try:
+            newFileName = self.getNewFileName(filename)
+        except KeyError:
+            return None
         if newFileName is None:
             logger.warn("No new filename found for {}".format(filename))
             return
@@ -179,16 +185,30 @@ class EpisodeNames:
 
 
 def main():
-    print("main")
     if len(sys.argv) > 1:
         series_path = sys.argv[1]
-
+    else:
+        return
+    print(getSeriesNameForPath(series_path))
     cache = EpisodeNames(series_path)
-
+    missing = copy.deepcopy(cache.episodes)
     for dirpath, dirnames, filenames in os.walk(series_path):
         for f in filenames:
             if getFileEnding(f) in endings:
                 cache.doRename(dirpath, f)
+                season, num = cache.get_episode_identifier(f)
+                try:
+                    del missing[season][num]
+                except KeyError:
+                    pass
+
+    for key, value in list(missing.items()):
+        if len(value) == 0:
+            del missing[key]
+
+    for season, episodes in missing.items():
+        print("SEASON: {}".format(season))
+        print("\t {}".format(sorted(list(episodes.keys()))))
 
 
 if __name__ == "__main__":
