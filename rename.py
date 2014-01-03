@@ -177,6 +177,8 @@ class EpisodeNames:
         logrename(directory, "mv \"{}\" -> \"{}\"\n".format(filename, os.path.basename(newFileName)))
         srcFileName = os.path.join(directory, filename)
         dstFileName = os.path.join(directory, newFileName)
+        while os.path.exists(dstFileName):
+            dstFileName += "_"
         # workaround for case-insentitive file-systems
         intFileName = "{}_{}".format(srcFileName, time.time())
         logger.debug("move via ", intFileName)
